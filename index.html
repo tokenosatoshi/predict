@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0A0A08">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Osatoshi Predict — $OTI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#F7C948;--orange:#E8641A;--dark:#0A0A08;--dark2:#111110;--dark3:#1A1A18;--cream:#F5F0E8;--muted:#888880;--green:#4ade80;--red:#f87171;--purple:#a78bfa;--border:rgba(247,201,72,0.15);--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--dark);color:var(--cream);font-family:'Space Mono',monospace;overflow:hidden}
+body{display:flex;flex-direction:column;max-width:430px;margin:0 auto}
+.t{display:none}body.lang-es .t-es{display:revert}body.lang-en .t-en{display:revert}
+span.t{display:none}body.lang-es span.t-es{display:inline}body.lang-en span.t-en{display:inline}
+.hdr{padding:calc(var(--st)+10px) 1.1rem 10px;background:rgba(10,10,8,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--gold);letter-spacing:-.02em}.logo span{color:var(--cream)}
+.hdr-right{display:flex;align-items:center;gap:7px}
+.lang-sw{display:flex;border:1px solid var(--border)}.lbtn{background:none;border:none;padding:3px 9px;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;letter-spacing:.08em}.lbtn.on{background:var(--gold);color:var(--dark)}
+.admin-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:3px 9px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:'Space Mono',monospace}
+.scroll{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:calc(68px + var(--sb))}.scroll::-webkit-scrollbar{display:none}
+.pg{display:none;padding:1.1rem;animation:fu .25s ease}.pg.on{display:block}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:rgba(10,10,8,.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding-bottom:var(--sb);z-index:50}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 4px 7px;cursor:pointer;border:none;background:none;color:var(--muted);transition:color .2s;gap:3px;font-family:'Space Mono',monospace}.ni.on{color:var(--gold)}
+.ni-icon{font-size:18px;line-height:1}.ni-label{font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+.card{background:var(--dark3);border:1px solid var(--border);padding:1.1rem 1.25rem;margin-bottom:10px;position:relative;overflow:hidden}
+.card-top{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--gold),var(--orange))}
+.slabel{font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;margin-top:1.1rem}.slabel:first-child{margin-top:0}
+.stat-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.875rem}
+.stat-box{background:var(--dark2);padding:.75rem 1rem;border:1px solid var(--border)}.stat-l{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}.stat-v{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold)}.stat-v.wh{color:var(--cream)}.stat-v.gr{color:var(--green)}
+.pred-card{background:var(--dark3);border:1px solid var(--border);margin-bottom:10px;overflow:hidden}
+.psbar{height:3px}.psbar.open{background:linear-gradient(90deg,var(--gold),var(--orange))}.psbar.closed{background:var(--muted)}.psbar.resolved{background:var(--green)}
+.pred-inner{padding:1rem 1.25rem}
+.pred-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;flex-wrap:wrap;gap:4px}
+.pbadge{font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border:1px solid}
+.pbadge.open{color:var(--gold);border-color:rgba(247,201,72,.3);background:rgba(247,201,72,.08)}.pbadge.closed{color:var(--muted);border-color:rgba(136,136,128,.3)}.pbadge.resolved{color:var(--green);border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.08)}
+.pred-reward{font-size:10px;color:var(--muted)}.pred-reward b{color:var(--gold);font-size:11px}
+.pred-winfo{font-size:9px;color:var(--purple)}
+.pred-q{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:var(--cream);margin-bottom:.6rem;line-height:1.4}
+.pred-dl{font-size:10px;color:var(--muted);margin-bottom:.6rem}
+.pred-cd{font-size:10px;color:var(--orange);margin-bottom:.6rem}
+.opts-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:.75rem}
+.opt-btn{background:var(--dark2);border:1px solid var(--border);padding:.6rem .5rem;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--cream);cursor:pointer;text-align:center;transition:all .2s;width:100%;line-height:1.4}
+.opt-btn.sel{border-color:var(--gold);background:rgba(247,201,72,.1);color:var(--gold)}
+.opt-btn.winner{border-color:var(--green);background:rgba(74,222,128,.1);color:var(--green)}
+.opt-btn.loser{opacity:.4}.opt-btn:disabled{cursor:default}
+.vbar{margin-top:4px;height:3px;background:var(--dark);overflow:hidden}.vfill{height:100%;background:var(--gold);transition:width .8s ease}
+.vpct{font-size:9px;color:var(--muted);margin-top:2px}
+.pred-sub{width:100%;background:var(--gold);color:var(--dark);border:none;padding:.65rem;font-family:'Space Mono',monospace;font-weight:700;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer;margin-top:.25rem}
+.pred-sub:active{background:var(--orange);color:white}.pred-sub:disabled{background:var(--muted);color:var(--dark);cursor:not-allowed}
+.pred-voted{font-size:.7rem;color:var(--green);text-align:center;padding:.5rem}
+.winners-box{margin-top:.75rem;padding:.875rem;background:var(--dark2);border:1px solid rgba(74,222,128,.2);position:relative;overflow:hidden}
+.winners-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--green),var(--gold))}
+.winners-title{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem}
+.winner-row{display:flex;align-items:center;gap:.75rem;padding:.4rem 0;border-bottom:1px solid rgba(74,222,128,.1)}.winner-row:last-child{border-bottom:none}
+.wmedal{font-size:14px;min-width:1.5rem;text-align:center}
+.waddr{font-size:.65rem;color:var(--cream);flex:1;word-break:break-all}
+.wprize{font-family:'Syne',sans-serif;font-size:.78rem;font-weight:700;color:var(--gold);white-space:nowrap}
+.wyou{font-size:9px;color:var(--green);margin-left:4px}
+.draw-box{margin-top:.75rem;padding:.875rem;background:rgba(0,0,0,.3);border:1px solid rgba(247,201,72,.1)}
+.draw-title{font-size:.68rem;color:var(--gold);margin-bottom:.4rem;font-weight:700}
+.draw-seed{font-size:.58rem;color:var(--muted);word-break:break-all;line-height:1.6;margin-bottom:.4rem}
+.draw-info{font-size:.62rem;color:var(--muted);line-height:1.6}
+.trans-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--green);border:1px solid rgba(74,222,128,.2);padding:2px 8px;margin-bottom:.75rem}
+.notify-bar{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);padding:.75rem 1rem;margin-bottom:10px;font-size:.7rem;color:var(--green);line-height:1.6;display:none}
+.wallet-box{background:var(--dark3);border:1px solid var(--border);padding:1rem 1.25rem;margin-bottom:10px}
+.wlabel{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block}
+.finput{width:100%;background:var(--dark2);border:1px solid var(--border);color:var(--cream);padding:.6rem .875rem;font-family:'Space Mono',monospace;font-size:.65rem;outline:none;margin-bottom:.75rem}
+.finput:focus{border-color:var(--gold)}.finput::placeholder{color:var(--muted)}
+.wsave{width:100%;background:var(--gold);color:var(--dark);border:none;padding:.65rem;font-family:'Space Mono',monospace;font-weight:700;font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;cursor:pointer}
+.wsave:active{background:var(--orange);color:white}
+.wconnected{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.2);margin-bottom:.75rem}
+.wcdot{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.wcaddr{font-size:.65rem;color:var(--green);word-break:break-all}
+.lb-row{display:flex;align-items:center;gap:.875rem;padding:.75rem 0;border-bottom:1px solid var(--border)}.lb-row:last-child{border-bottom:none}
+.lb-rank{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--muted);min-width:28px;text-align:center}.lb-rank.top{color:var(--gold)}
+.lb-info{flex:1}.lb-name{font-size:.7rem;color:var(--cream)}.lb-stats{font-size:.6rem;color:var(--muted);margin-top:2px}
+.lb-oti{font-family:'Syne',sans-serif;font-size:.88rem;font-weight:700;color:var(--gold);white-space:nowrap}
+.hist-row{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--border)}.hist-row:last-child{border-bottom:none}
+.hist-q{font-size:.72rem;color:var(--cream);line-height:1.5;margin-bottom:3px}.hist-meta{font-size:.6rem;color:var(--muted)}
+.hresult{font-size:.65rem;padding:2px 8px;border:1px solid;white-space:nowrap;margin-left:auto;flex-shrink:0}
+.hresult.win{color:var(--green);border-color:rgba(74,222,128,.3)}.hresult.loss{color:var(--red);border-color:rgba(248,113,113,.3)}.hresult.pending{color:var(--gold);border-color:rgba(247,201,72,.3)}.hresult.near{color:var(--muted);border-color:rgba(136,136,128,.3)}
+.admin-overlay{position:fixed;inset:0;background:var(--dark);z-index:200;display:none;flex-direction:column;max-width:430px;left:50%;transform:translateX(-50%)}.admin-overlay.on{display:flex}
+.admin-hdr{padding:calc(var(--st)+12px) 1.1rem 12px;background:var(--dark2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.atitle{font-family:'Syne',sans-serif;font-size:1rem;font-weight:700;color:var(--gold)}
+.aclose{background:none;border:none;color:var(--muted);font-size:1.3rem;cursor:pointer;padding:4px 8px}
+.ascroll{flex:1;overflow-y:auto;padding:1.1rem}.ascroll::-webkit-scrollbar{display:none}
+.flabel{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block}.fgroup{margin-bottom:.875rem}
+textarea.finput{resize:vertical;min-height:60px}
+.fselect{width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--cream);padding:.6rem .875rem;font-family:'Space Mono',monospace;font-size:.72rem;outline:none;cursor:pointer}.fselect option{background:var(--dark3)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.asub{width:100%;background:var(--gold);color:var(--dark);border:none;padding:.75rem;font-family:'Space Mono',monospace;font-weight:700;font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:.25rem}.asub:active{background:var(--orange);color:white}
+.asection{font-family:'Syne',sans-serif;font-size:.75rem;font-weight:700;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin:1.25rem 0 .75rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.pmr{background:var(--dark3);border:1px solid var(--border);padding:.875rem 1rem;margin-bottom:6px}
+.pmr-q{font-size:.75rem;color:var(--cream);margin-bottom:.35rem;line-height:1.4}.pmr-meta{font-size:.6rem;color:var(--muted);margin-bottom:.6rem;line-height:1.6}
+.pmr-acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.pmr-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:3px 10px;font-family:'Space Mono',monospace;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.pmr-btn.res{border-color:rgba(74,222,128,.3);color:var(--green)}.pmr-btn.del{border-color:rgba(248,113,113,.3);color:var(--red)}
+.pmr-sel{background:var(--dark2);border:1px solid var(--border);color:var(--cream);padding:3px 8px;font-family:'Space Mono',monospace;font-size:.62rem;cursor:pointer}
+.smsg{font-size:.7rem;color:var(--green);text-align:center;padding:.5rem;display:none}
+.pass-ov{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:2rem;max-width:430px;left:50%;transform:translateX(-50%)}
+.ptitle{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:var(--gold)}
+.pinput{width:100%;background:var(--dark3);border:1px solid var(--border);color:var(--cream);padding:.75rem 1rem;font-family:'Space Mono',monospace;font-size:.85rem;outline:none;text-align:center;letter-spacing:.2em}.pinput:focus{border-color:var(--gold)}
+.pbtn{width:100%;background:var(--gold);color:var(--dark);border:none;padding:.75rem;font-family:'Space Mono',monospace;font-weight:700;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}
+.perr{font-size:.7rem;color:var(--red);display:none}
+.empty-state{text-align:center;padding:2rem 1rem;color:var(--muted);font-size:.72rem;line-height:1.8}
+</style>
+</head>
+<body class="lang-es">
+<div class="pass-ov" id="passOv">
+  <div class="ptitle">Admin · OTI Predict</div>
+  <input type="password" class="pinput" id="pInp" placeholder="••••••••" maxlength="30">
+  <div class="perr" id="pErr"><span class="t t-es">Contraseña incorrecta</span><span class="t t-en">Wrong password</span></div>
+  <button class="pbtn" onclick="checkP()"><span class="t t-es">Acceder</span><span class="t t-en">Enter</span></button>
+  <button style="background:none;border:none;color:var(--muted);font-size:.72rem;cursor:pointer;letter-spacing:.06em;text-transform:uppercase" onclick="closeP()"><span class="t t-es">Cancelar</span><span class="t t-en">Cancel</span></button>
+</div>
+<div class="admin-overlay" id="adminPnl">
+  <div class="admin-hdr"><div class="atitle">Admin — $OTI Predict</div><button class="aclose" onclick="closeAdmin()">✕</button></div>
+  <div class="ascroll">
+    <div class="asection"><span class="t t-es">Crear pronóstico</span><span class="t t-en">Create prediction</span></div>
+    <div class="fgroup"><label class="flabel"><span class="t t-es">Pregunta en español</span><span class="t t-en">Question (Spanish)</span></label><textarea class="finput" id="fq" placeholder="¿Cuál será el precio de BTC el 1 de junio?"></textarea></div>
+    <div class="fgroup"><label class="flabel"><span class="t t-es">Pregunta en inglés</span><span class="t t-en">Question (English)</span></label><textarea class="finput" id="fqe" placeholder="What will BTC price be on June 1st?"></textarea></div>
+    <div class="fgroup"><label class="flabel"><span class="t t-es">Opciones (mín 2, máx 4)</span><span class="t t-en">Options (min 2, max 4)</span></label>
+      <input class="finput" id="o1" placeholder="Opción 1" style="margin-bottom:6px">
+      <input class="finput" id="o2" placeholder="Opción 2" style="margin-bottom:6px">
+      <input class="finput" id="o3" placeholder="Opción 3 (opcional)" style="margin-bottom:6px">
+      <input class="finput" id="o4" placeholder="Opción 4 (opcional)" style="margin-bottom:0">
+    </div>
+    <div class="frow" style="margin-bottom:.875rem">
+      <div><label class="flabel"><span class="t t-es">Recompensa total ($OTI)</span><span class="t t-en">Total reward ($OTI)</span></label><input type="number" class="finput" id="fr" placeholder="50000" min="0" style="margin-bottom:0"></div>
+      <div><label class="flabel"><span class="t t-es">Nº de ganadores</span><span class="t t-en">No. of winners</span></label><input type="number" class="finput" id="fw" placeholder="3" min="1" max="500" style="margin-bottom:0"></div>
+    </div>
+    <div class="fgroup"><label class="flabel"><span class="t t-es">Fecha límite</span><span class="t t-en">Deadline</span></label><input type="datetime-local" class="finput" id="fd" style="margin-bottom:0"></div>
+    <div class="frow" style="margin-bottom:.875rem">
+      <div><label class="flabel"><span class="t t-es">Categoría</span><span class="t t-en">Category</span></label>
+        <select class="fselect" id="fc"><option value="btc">💰 BTC</option><option value="project">⚡ OTI</option><option value="market">📈 Mercado</option><option value="solana">🟣 Solana</option><option value="other">🔮 Otro</option></select></div>
+      <div><label class="flabel"><span class="t t-es">Método sorteo</span><span class="t t-en">Draw method</span></label>
+        <select class="fselect" id="fm"><option value="random"><span class="t t-es">Sorteo aleatorio</span><span class="t t-en">Random draw</span></option><option value="all"><span class="t t-es">Todos los que aciertan</span><span class="t t-en">All correct</span></option><option value="first"><span class="t t-es">Primeros N en votar</span><span class="t t-en">First N voters</span></option></select></div>
+    </div>
+    <button class="asub" onclick="createPred()"><span class="t t-es">Publicar pronóstico</span><span class="t t-en">Publish prediction</span></button>
+    <div class="smsg" id="cMsg"><span class="t t-es">✓ Pronóstico publicado</span><span class="t t-en">✓ Prediction published</span></div>
+    <div class="asection"><span class="t t-es">Gestionar</span><span class="t t-en">Manage</span></div>
+    <div id="aPredList"></div>
+    <div class="asection"><span class="t t-es">Configuración</span><span class="t t-en">Settings</span></div>
+    <div class="fgroup"><label class="flabel"><span class="t t-es">Nueva contraseña</span><span class="t t-en">New password</span></label><input type="password" class="finput" id="npInp" style="margin-bottom:0" placeholder="Nueva contraseña"></div>
+    <button class="asub" onclick="changeP()" style="background:var(--dark3);color:var(--gold);border:1px solid var(--border)"><span class="t t-es">Cambiar contraseña</span><span class="t t-en">Change password</span></button>
+    <div class="smsg" id="pMsg"><span class="t t-es">✓ Actualizada</span><span class="t t-en">✓ Updated</span></div>
+    <div style="height:2rem"></div>
+  </div>
+</div>
+<div class="hdr">
+  <div class="logo">OTI<span>Predict</span></div>
+  <div class="hdr-right">
+    <div class="lang-sw"><button class="lbtn on" id="bEs" onclick="setLang('es')">ES</button><button class="lbtn" id="bEn" onclick="setLang('en')">EN</button></div>
+    <button class="admin-btn" onclick="openP()">Admin</button>
+  </div>
+</div>
+<div class="scroll" id="scrl">
+  <div class="pg on" id="pg-home">
+    <div id="nBar" class="notify-bar"></div>
+    <div class="stat-row">
+      <div class="stat-box"><div class="stat-l"><span class="t t-es">Abiertos</span><span class="t t-en">Open</span></div><div class="stat-v" id="sOpen">0</div></div>
+      <div class="stat-box"><div class="stat-l">$OTI</div><div class="stat-v" id="sOti">0</div></div>
+      <div class="stat-box"><div class="stat-l"><span class="t t-es">Jugadores</span><span class="t t-en">Players</span></div><div class="stat-v wh" id="sUsers">0</div></div>
+      <div class="stat-box"><div class="stat-l"><span class="t t-es">Resueltos</span><span class="t t-en">Resolved</span></div><div class="stat-v gr" id="sRes">0</div></div>
+    </div>
+    <div class="slabel"><span class="t t-es">Pronósticos activos</span><span class="t t-en">Active predictions</span></div>
+    <div id="oPreds"></div>
+    <div id="rSection" style="display:none"><div class="slabel"><span class="t t-es">Resueltos recientemente</span><span class="t t-en">Recently resolved</span></div><div id="rPreds"></div></div>
+    <div class="empty-state" id="emptyS"><div style="font-size:2rem;margin-bottom:.75rem">🔮</div><span class="t t-es">No hay pronósticos activos.<br>El admin publicará nuevos pronto.</span><span class="t t-en">No active predictions yet.<br>The admin will publish new ones soon.</span></div>
+  </div>
+  <div class="pg" id="pg-wallet">
+    <div class="slabel" style="margin-top:0"><span class="t t-es">Mi billetera Solana</span><span class="t t-en">My Solana wallet</span></div>
+    <div class="wallet-box">
+      <div id="wConn" style="display:none">
+        <label class="wlabel"><span class="t t-es">Billetera conectada</span><span class="t t-en">Connected wallet</span></label>
+        <div class="wconnected"><div class="wcdot"></div><div class="wcaddr" id="wAddr">—</div></div>
+        <button onclick="disconnW()" style="width:100%;background:none;border:1px solid rgba(248,113,113,.3);color:var(--red);padding:.5rem;font-family:'Space Mono',monospace;font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;cursor:pointer"><span class="t t-es">Desconectar</span><span class="t t-en">Disconnect</span></button>
+      </div>
+      <div id="wForm">
+        <label class="wlabel"><span class="t t-es">Dirección Solana para recibir $OTI</span><span class="t t-en">Solana address to receive $OTI</span></label>
+        <input class="finput" id="wInp" placeholder="7H9ZLBim..." maxlength="50">
+        <label class="wlabel"><span class="t t-es">Nombre / alias (opcional)</span><span class="t t-en">Name / alias (optional)</span></label>
+        <input class="finput" id="aInp" placeholder="SatoshiMiner99" style="margin-bottom:.75rem">
+        <button class="wsave" onclick="saveW()"><span class="t t-es">Guardar billetera</span><span class="t t-en">Save wallet</span></button>
+      </div>
+    </div>
+    <div class="card"><div class="card-top"></div>
+      <div class="trans-badge">🔒 <span class="t t-es">Sorteo transparente</span><span class="t t-en">Transparent draw</span></div>
+      <p style="font-size:.72rem;color:var(--muted);line-height:1.9" class="t t-es">1. Conecta tu billetera Solana<br>2. Participa en pronósticos<br>3. Al resolverse, el sorteo es automático y público<br>4. El admin envía $OTI desde la wallet oficial<br>5. Cada envío verificable en Solscan</p>
+      <p style="font-size:.72rem;color:var(--muted);line-height:1.9" class="t t-en">1. Connect your Solana wallet<br>2. Participate in predictions<br>3. Draw is automatic and public when resolved<br>4. Admin sends $OTI from the official wallet<br>5. Every transaction verifiable on Solscan</p>
+      <div style="margin-top:.875rem;padding:.75rem;background:var(--dark2);border:1px solid var(--border)">
+        <div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:4px"><span class="t t-es">Wallet oficial de premios</span><span class="t t-en">Official rewards wallet</span></div>
+        <div style="font-size:.62rem;color:var(--gold);word-break:break-all;line-height:1.6">HhwEsWytSP6j7S2xXWnn7w3SgLTr2BWDQk2JM7SCSAb2</div>
+        <a href="https://solscan.io/account/HhwEsWytSP6j7S2xXWnn7w3SgLTr2BWDQk2JM7SCSAb2" target="_blank" style="display:inline-block;margin-top:.5rem;font-size:.62rem;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid rgba(247,201,72,.3)">🔍 Solscan →</a>
+      </div>
+    </div>
+    <div class="slabel"><span class="t t-es">Mis participaciones</span><span class="t t-en">My history</span></div>
+    <div class="card" style="padding:0"><div id="myH" style="padding:.5rem 1.25rem"></div><div class="empty-state" id="myE" style="padding:1.5rem"><span class="t t-es">Aún no has participado.</span><span class="t t-en">No participations yet.</span></div></div>
+  </div>
+  <div class="pg" id="pg-rank">
+    <div class="slabel" style="margin-top:0"><span class="t t-es">Tabla de líderes</span><span class="t t-en">Leaderboard</span></div>
+    <div class="card" style="padding:0"><div id="lbL" style="padding:.5rem 1.25rem"></div></div>
+    <div style="margin-top:.875rem;background:var(--dark3);border:1px solid var(--border);padding:.875rem 1rem">
+      <div class="trans-badge" style="margin-bottom:.5rem">🔒 <span class="t t-es">Sorteo verificable</span><span class="t t-en">Verifiable draw</span></div>
+      <p style="font-size:.68rem;color:var(--muted);line-height:1.7" class="t t-es">El sorteo usa un algoritmo determinista basado en las billeteras participantes + timestamp de cierre. El resultado es reproducible y verificable por cualquier persona.</p>
+      <p style="font-size:.68rem;color:var(--muted);line-height:1.7" class="t t-en">The draw uses a deterministic algorithm based on participating wallets + closing timestamp. Results are reproducible and verifiable by anyone.</p>
+    </div>
+  </div>
+</div>
+<nav class="bnav">
+  <button class="ni on" onclick="goTo('home',this)"><span class="ni-icon">🔮</span><span class="ni-label"><span class="t t-es">Inicio</span><span class="t t-en">Home</span></span></button>
+  <button class="ni" onclick="goTo('wallet',this)"><span class="ni-icon">👛</span><span class="ni-label"><span class="t t-es">Billetera</span><span class="t t-en">Wallet</span></span></button>
+  <button class="ni" onclick="goTo('rank',this)"><span class="ni-icon">🏆</span><span class="ni-label">Ranking</span></button>
+</nav>
+<script>
+const K={pass:'oti_pass',preds:'oti_preds',votes:'oti_votes',wallet:'oti_wallet',alias:'oti_alias',lb:'oti_lb'};
+const CI={btc:'💰',project:'⚡',market:'📈',solana:'🟣',other:'🔮'};
+const MD=['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣','8️⃣','9️⃣','🔟'];
+function gs(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function ss(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+function gj(k,d){try{return JSON.parse(gs(k))||d;}catch(e){return d;}}
+function sj(k,v){ss(k,JSON.stringify(v));}
+function gPass(){return gs(K.pass)||'osatoshi2026';}
+function gPreds(){return gj(K.preds,[]);}
+function sPreds(p){sj(K.preds,p);}
+function gVotes(){return gj(K.votes,{});}
+function sVotes(v){sj(K.votes,v);}
+function gLB(){return gj(K.lb,{});}
+function sLB(l){sj(K.lb,l);}
+function mW(){return gs(K.wallet)||'';}
+function mA(){return gs(K.alias)||'';}
+function isEs(){return document.body.classList.contains('lang-es');}
+function setLang(l){document.body.className='lang-'+l;document.getElementById('bEs').classList.toggle('on',l==='es');document.getElementById('bEn').classList.toggle('on',l==='en');try{ss('oti-lang',l);}catch(e){}renderAll();}
+try{const s=gs('oti-lang');if(s)setLang(s);}catch(e){}
+function goTo(p,btn){document.querySelectorAll('.pg').forEach(x=>x.classList.remove('on'));document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));document.getElementById('pg-'+p).classList.add('on');btn.classList.add('on');document.getElementById('scrl').scrollTop=0;if(p==='wallet')renderW();if(p==='rank')renderLB();}
+function openP(){document.getElementById('passOv').style.display='flex';document.getElementById('pInp').value='';document.getElementById('pErr').style.display='none';}
+function closeP(){document.getElementById('passOv').style.display='none';}
+function checkP(){const v=document.getElementById('pInp').value;if(v===gPass()){closeP();openAdmin();}else{document.getElementById('pErr').style.display='block';}}
+document.getElementById('pInp').addEventListener('keydown',e=>{if(e.key==='Enter')checkP();});
+function openAdmin(){document.getElementById('adminPnl').classList.add('on');renderAList();}
+function closeAdmin(){document.getElementById('adminPnl').classList.remove('on');}
+function changeP(){const v=document.getElementById('npInp').value.trim();if(!v)return;ss(K.pass,v);document.getElementById('npInp').value='';showM('pMsg');}
+function showM(id){const m=document.getElementById(id);m.style.display='block';setTimeout(()=>m.style.display='none',2500);}
+function seedH(str){let h=0;for(let i=0;i<str.length;i++){h=(Math.imul(31,h)+str.charCodeAt(i))|0;}return Math.abs(h);}
+function drawW(wallets,count,seed){if(!wallets.length)return[];const sh=[...wallets];let s=seedH(seed+wallets.join('|'));for(let i=sh.length-1;i>0;i--){s=(s*1664525+1013904223)&0xffffffff;const j=Math.abs(s)%(i+1);[sh[i],sh[j]]=[sh[j],sh[i]];}return sh.slice(0,Math.min(count,sh.length));}
+function gSeed(pred){return pred.id+'|'+pred.deadline+'|'+pred.winner;}
+function createPred(){
+  const q=document.getElementById('fq').value.trim();
+  const qe=document.getElementById('fqe').value.trim();
+  const opts=[document.getElementById('o1').value.trim(),document.getElementById('o2').value.trim(),document.getElementById('o3').value.trim(),document.getElementById('o4').value.trim()].filter(Boolean);
+  const dl=document.getElementById('fd').value;
+  const reward=parseInt(document.getElementById('fr').value)||0;
+  const wc=parseInt(document.getElementById('fw').value)||3;
+  const cat=document.getElementById('fc').value;
+  const method=document.getElementById('fm').value;
+  if(!q||opts.length<2){alert(isEs()?'Completa la pregunta y al menos 2 opciones':'Fill in question and at least 2 options');return;}
+  const pred={id:Date.now(),q,qe:qe||q,opts,dl,reward,wc,method,cat,status:'open',winner:null,winners:[],drawSeed:'',prizeEach:0,created:new Date().toISOString(),votes:{}};
+  opts.forEach(o=>pred.votes[o]=0);
+  const preds=gPreds();preds.unshift(pred);sPreds(preds);
+  ['fq','fqe','o1','o2','o3','o4','fr','fw'].forEach(id=>document.getElementById(id).value='');
+  showM('cMsg');renderAList();renderAll();
+}
+function resolvePred(id,winner){
+  const preds=gPreds();const pred=preds.find(p=>p.id===id);if(!pred)return;
+  pred.status='resolved';pred.winner=winner;
+  const seed=gSeed({...pred,winner});pred.drawSeed=seed;
+  const votes=gVotes();
+  const correct=Object.keys(votes).filter(w=>votes[w][id]&&votes[w][id].choice===winner);
+  let winners=[];
+  if(pred.method==='all')winners=correct;
+  else if(pred.method==='first')winners=correct.slice(0,pred.wc);
+  else winners=drawW(correct,pred.wc,seed);
+  pred.winners=winners;
+  pred.prizeEach=winners.length>0?Math.floor(pred.reward/winners.length):0;
+  const lb=gLB();
+  correct.forEach(w=>{if(!lb[w])lb[w]={wins:0,total:0,oti:0,alias:''};lb[w].total++;lb[w].alias=votes[w][id].alias||lb[w].alias;});
+  winners.forEach(w=>{if(!lb[w])lb[w]={wins:0,total:0,oti:0,alias:''};lb[w].wins++;lb[w].oti+=pred.prizeEach;lb[w].alias=votes[w]&&votes[w][id]?votes[w][id].alias||lb[w].alias:lb[w].alias;});
+  Object.keys(votes).forEach(w=>{if(votes[w][id]&&!correct.includes(w)){if(!lb[w])lb[w]={wins:0,total:0,oti:0,alias:''};lb[w].total++;}});
+  sPreds(preds);sLB(lb);renderAList();renderAll();checkNotif();
+}
+function deletePred(id){if(!confirm(isEs()?'¿Eliminar?':'Delete?'))return;sPreds(gPreds().filter(p=>p.id!==id));renderAList();renderAll();}
+function checkNotif(){const w=mW();if(!w)return;const won=gPreds().filter(p=>p.status==='resolved'&&p.winners.includes(w));const bar=document.getElementById('nBar');if(won.length){bar.style.display='block';bar.textContent=isEs()?'🎉 ¡Ganaste en '+won.length+' pronóstico(s)! Revisa tu historial en Billetera.':'🎉 You won in '+won.length+' prediction(s)! Check your Wallet history.';}else bar.style.display='none';}
+const selO={};
+function renderPCard(pred,container){
+  const votes=gVotes();const w=mW();const myV=w&&votes[w]?votes[w][pred.id]:null;
+  const now=new Date();const dlP=pred.dl&&new Date(pred.dl)<now;
+  const isOpen=pred.status==='open'&&!dlP;
+  const total=Object.values(pred.votes).reduce((a,b)=>a+b,0);
+  const q=isEs()?pred.q:pred.qe;
+  const sc=pred.status==='resolved'?'resolved':isOpen?'open':'closed';
+  const bt=pred.status==='resolved'?(isEs()?'Resuelto':'Resolved'):isOpen?(isEs()?'Abierto':'Open'):(isEs()?'Cerrado':'Closed');
+  const dlS=pred.dl?new Date(pred.dl).toLocaleDateString(isEs()?'es-PE':'en-US',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'';
+  let tLeft='';
+  if(isOpen&&pred.dl){const ms=new Date(pred.dl)-now;const h=Math.floor(ms/3600000);const m=Math.floor((ms%3600000)/60000);tLeft=h>24?Math.floor(h/24)+'d '+h%24+'h':h+'h '+m+'m';}
+  let opH='';
+  pred.opts.forEach(opt=>{
+    const cnt=pred.votes[opt]||0;const pct=total>0?Math.round(cnt/total*100):0;
+    const iW=pred.status==='resolved'&&pred.winner===opt;const iL=pred.status==='resolved'&&pred.winner&&pred.winner!==opt;const iS=myV&&myV.choice===opt;
+    opH+=`<div><button class="opt-btn${iS?' sel':''}${iW?' winner':''}${iL?' loser':''}" onclick="selOpt(${pred.id},'${opt.replace(/'/g,"\\'")}',this)" ${!isOpen||myV?'disabled':''}>${iW?'✓ ':''}${opt}</button><div class="vbar"><div class="vfill" style="width:${pct}%"></div></div><div class="vpct">${pct}% · ${cnt} ${isEs()?'votos':'votes'}</div></div>`;
+  });
+  let wHTML='';
+  if(pred.status==='resolved'&&pred.winners&&pred.winners.length>0){
+    const lb=gLB();const pe=pred.prizeEach||0;
+    const rows=pred.winners.map((wa,i)=>{const d=lb[wa];const name=d&&d.alias?d.alias:wa.slice(0,8)+'...'+wa.slice(-6);const isMe=w&&wa===w;return`<div class="winner-row"><div class="wmedal">${MD[i]||'🏅'}</div><div class="waddr">${name}${isMe?'<span class="wyou">'+(isEs()?'(Tú)':'(You)')+'</span>':''}</div><div class="wprize">${pe.toLocaleString()} $OTI</div></div>`;}).join('');
+    const mLabel=pred.method==='all'?(isEs()?'Todos los aciertos':'All correct'):pred.method==='first'?(isEs()?'Primeros votantes':'First voters'):(isEs()?'Sorteo aleatorio':'Random draw');
+    wHTML=`<div class="winners-box"><div class="winners-title">🏆 ${isEs()?'Ganadores':'Winners'} · ${pred.winners.length} ${isEs()?'seleccionados de':'selected from'} ${total} ${isEs()?'participantes':'participants'}</div>${rows}<div class="draw-box"><div class="draw-title">🔒 ${isEs()?'Método':'Method'}: ${mLabel} · ${isEs()?'Premio por ganador':'Per winner'}: ${pe.toLocaleString()} $OTI</div><div class="draw-seed">${isEs()?'Semilla':'Seed'}: ${pred.drawSeed||gSeed(pred)}</div><div class="draw-info">${isEs()?'Algoritmo determinista — reproducible y verificable públicamente':'Deterministic algorithm — publicly reproducible and verifiable'}</div></div></div>`;
+  }
+  const amW=pred.status==='resolved'&&w&&pred.winners&&pred.winners.includes(w);
+  const amC=pred.status==='resolved'&&myV&&myV.choice===pred.winner;
+  let botH='';
+  if(isOpen&&!myV)botH=`<button class="pred-sub" id="sub${pred.id}" onclick="submitV(${pred.id})" disabled>${isEs()?'Confirmar pronóstico':'Confirm prediction'}</button>`;
+  else if(myV&&isOpen)botH=`<div class="pred-voted">✓ ${isEs()?'Tu pronóstico':'Your prediction'}: ${myV.choice}</div>`;
+  else if(amW)botH=`<div style="margin-top:.75rem;padding:.75rem;background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.2);font-size:.72rem;color:var(--green);text-align:center;line-height:1.6">🎉 ${isEs()?'¡Ganaste '+pred.prizeEach.toLocaleString()+' $OTI!':'You won '+pred.prizeEach.toLocaleString()+' $OTI!'} ${isEs()?'El admin los enviará a tu billetera.':'The admin will send them to your wallet.'}</div>`;
+  else if(amC&&!amW)botH=`<div style="margin-top:.75rem;padding:.75rem;background:rgba(247,201,72,.05);border:1px solid rgba(247,201,72,.1);font-size:.68rem;color:var(--muted);text-align:center;line-height:1.6">${isEs()?'Acertaste pero no saliste en el sorteo esta vez. ¡Sigue participando!':'You were right but not selected this time. Keep participating!'}</div>`;
+  const div=document.createElement('div');div.className='pred-card';
+  div.innerHTML=`<div class="psbar ${sc}"></div><div class="pred-inner"><div class="pred-meta"><span class="pbadge ${sc}">${bt}</span><span class="pred-reward"><b>${pred.reward.toLocaleString()}</b> $OTI</span><span class="pred-winfo">👥 ${pred.wc} ${isEs()?'ganadores':'winners'}</span></div><div class="pred-q">${CI[pred.cat]||'🔮'} ${q}</div>${dlS?`<div class="pred-dl">⏰ ${isEs()?'Cierra':'Closes'}: ${dlS}</div>`:''}${tLeft?`<div class="pred-cd">⏱ ${isEs()?'Tiempo restante':'Time left'}: ${tLeft}</div>`:''}  <div class="opts-grid">${opH}</div>${botH}${wHTML}</div>`;
+  container.appendChild(div);
+}
+function selOpt(id,opt,btn){selO[id]=opt;btn.closest('.opts-grid').querySelectorAll('.opt-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');const s=document.getElementById('sub'+id);if(s)s.disabled=false;}
+function submitV(id){
+  const c=selO[id];if(!c)return;
+  const w=mW();if(!w){alert(isEs()?'Conecta tu billetera primero en la pestaña Billetera':'Connect your wallet first in the Wallet tab');return;}
+  const preds=gPreds();const pred=preds.find(p=>p.id===id);if(!pred)return;
+  pred.votes[c]=(pred.votes[c]||0)+1;sPreds(preds);
+  const votes=gVotes();if(!votes[w])votes[w]={};
+  votes[w][id]={choice:c,alias:mA(),ts:new Date().toISOString()};sVotes(votes);renderAll();
+}
+function renderAll(){
+  const preds=gPreds();const open=preds.filter(p=>p.status==='open');const res=preds.filter(p=>p.status==='resolved').slice(0,5);
+  const totalOTI=open.reduce((a,p)=>a+p.reward,0);const votes=gVotes();
+  document.getElementById('sOpen').textContent=open.length;
+  document.getElementById('sOti').textContent=totalOTI.toLocaleString();
+  document.getElementById('sUsers').textContent=Object.keys(votes).length;
+  document.getElementById('sRes').textContent=preds.filter(p=>p.status==='resolved').length;
+  const oc=document.getElementById('oPreds');oc.innerHTML='';open.forEach(p=>renderPCard(p,oc));
+  const rc=document.getElementById('rPreds');rc.innerHTML='';res.forEach(p=>renderPCard(p,rc));
+  document.getElementById('rSection').style.display=res.length?'block':'none';
+  document.getElementById('emptyS').style.display=open.length?'none':'block';
+  checkNotif();
+}
+function saveW(){const addr=document.getElementById('wInp').value.trim();const alias=document.getElementById('aInp').value.trim();if(!addr||addr.length<20){alert(isEs()?'Dirección Solana inválida (mín 20 caracteres)':'Invalid Solana address (min 20 chars)');return;}ss(K.wallet,addr);ss(K.alias,alias);renderW();}
+function disconnW(){localStorage.removeItem(K.wallet);localStorage.removeItem(K.alias);renderW();}
+function renderW(){
+  const addr=mW();const alias=mA();
+  document.getElementById('wConn').style.display=addr?'block':'none';
+  document.getElementById('wForm').style.display=addr?'none':'block';
+  if(addr)document.getElementById('wAddr').textContent=(alias?alias+' — ':'')+addr.slice(0,10)+'...'+addr.slice(-6);
+  const votes=gVotes();const preds=gPreds();const myV=addr&&votes[addr]?votes[addr]:{};
+  const h=document.getElementById('myH');const e=document.getElementById('myE');
+  const entries=Object.keys(myV).reverse();
+  if(!entries.length){h.innerHTML='';e.style.display='block';return;}
+  e.style.display='none';h.innerHTML='';
+  entries.forEach(pid=>{
+    const v=myV[pid];const pred=preds.find(p=>p.id==pid);if(!pred)return;
+    const iW=pred.status==='resolved'&&pred.winners&&pred.winners.includes(addr);
+    const iC=pred.status==='resolved'&&pred.winner===v.choice;
+    let rl,rc;
+    if(pred.status!=='resolved'){rl=isEs()?'Pendiente':'Pending';rc='pending';}
+    else if(iW){rl=`WIN +${(pred.prizeEach||0).toLocaleString()} $OTI`;rc='win';}
+    else if(iC){rl=isEs()?'Correcto':'Correct';rc='near';}
+    else{rl='LOSS';rc='loss';}
+    const row=document.createElement('div');row.className='hist-row';
+    row.innerHTML=`<div class="hist-q" style="flex:1"><div>${isEs()?pred.q:pred.qe}</div><div class="hist-meta">${isEs()?'Voto':'Vote'}: <b style="color:var(--cream)">${v.choice}</b>${pred.status==='resolved'?' · '+(isEs()?'Resp':'Ans')+': <b style="color:var(--gold)">'+pred.winner+'</b>':''}</div></div><div class="hresult ${rc}">${rl}</div>`;
+    h.appendChild(row);
+  });
+}
+function renderLB(){
+  const lb=gLB();const w=mW();const c=document.getElementById('lbL');
+  const ent=Object.entries(lb).sort((a,b)=>b[1].oti-a[1].oti).slice(0,20);
+  if(!ent.length){c.innerHTML=`<div class="empty-state" style="padding:1.5rem">${isEs()?'Ranking disponible al resolver los primeros pronósticos.':'Ranking available after first predictions are resolved.'}</div>`;return;}
+  c.innerHTML='';
+  ent.forEach(([wallet,d],i)=>{
+    const isMe=w&&wallet===w;const name=d.alias||(wallet.slice(0,6)+'...'+wallet.slice(-4));
+    const row=document.createElement('div');row.className='lb-row';
+    row.innerHTML=`<div class="lb-rank ${i<3?'top':''}">${MD[i]||i+1}</div><div class="lb-info"><div class="lb-name">${name}${isMe?'<span style="font-size:9px;color:var(--green);margin-left:5px">'+(isEs()?'(Tú)':'(You)')+'</span>':''}</div><div class="lb-stats">${d.wins} ${isEs()?'ganados':'wins'} · ${d.total} ${isEs()?'participaciones':'entries'}</div></div><div class="lb-oti">${d.oti.toLocaleString()} $OTI</div>`;
+    c.appendChild(row);
+  });
+}
+function renderAList(){
+  const c=document.getElementById('aPredList');const preds=gPreds();
+  if(!preds.length){c.innerHTML=`<div style="font-size:.72rem;color:var(--muted);text-align:center;padding:1rem">${isEs()?'No hay pronósticos aún':'No predictions yet'}</div>`;return;}
+  c.innerHTML='';
+  preds.forEach(p=>{
+    const tv=Object.values(p.votes).reduce((a,b)=>a+b,0);
+    const div=document.createElement('div');div.className='pmr';
+    const acts=p.status==='open'
+      ?`<select class="pmr-sel" id="rs${p.id}">${p.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select><button class="pmr-btn res" onclick="resolvePred(${p.id},document.getElementById('rs${p.id}').value)">${isEs()?'Resolver':'Resolve'}</button>`
+      :`<span style="font-size:.62rem;color:var(--green)">✓ ${isEs()?'Ganó':'Winner'}: ${p.winner} · ${p.winners.length} ${isEs()?'ganadores':'winners'}</span>`;
+    div.innerHTML=`<div class="pmr-q">${p.q}</div><div class="pmr-meta">${p.opts.join(' · ')} | ${p.reward.toLocaleString()} $OTI | ${p.wc} ${isEs()?'ganadores':'winners'} | ${isEs()?'Método':'Method'}: ${p.method} | ${tv} ${isEs()?'votos':'votes'}</div><div class="pmr-acts">${acts}<button class="pmr-btn del" onclick="deletePred(${p.id})">${isEs()?'Eliminar':'Delete'}</button></div>`;
+    c.appendChild(div);
+  });
+}
+renderAll();renderW();
+try{const dl=document.getElementById('fd');if(dl){const d=new Date();d.setDate(d.getDate()+7);dl.value=d.toISOString().slice(0,16);}}catch(e){}
+setInterval(()=>{if(gPreds().some(p=>p.status==='open'&&p.dl&&new Date(p.dl)<new Date()))renderAll();},30000);
+</script>
+</body>
+</html>
